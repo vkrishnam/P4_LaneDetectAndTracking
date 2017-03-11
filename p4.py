@@ -124,6 +124,15 @@ def get_thresholded_image(img):
 
 def getPerspectiveMatrices(img, src=None):
     global M, Minv
+
+# | Source        | Destination   |
+#|:-------------:|:-------------:|
+#| 585, 460      | 320, 0        |
+#| 203, 720      | 320, 720      |
+#| 1127, 720     | 960, 720      |
+#| 695, 460      | 960, 0        |
+
+
     img_size = (img.shape[1], img.shape[0])
     if src is None:
         src_vertices = np.array([[[585,455],[705, 455], [1130,720], [190, 720]]], dtype=np.int32)
@@ -519,12 +528,13 @@ def process_image(img):
     warped_image= warp(com_thresh_binary)
 
     #print('frameCnt', frameCount, '\n')
+    # Instantiate those Lane classes - one for left and another for right
     if (frameCount == 0):
         left_lane = Line()
         right_lane = Line()
 
     #if ((frameCount % 30)== 0) or (left_lane.detected == False) or (right_lane.detected == False):
-    if True: #(left_lane.detected == False) or (right_lane.detected == False):
+    if (left_lane.detected == False) or (right_lane.detected == False):
         #print('pre',frameCount)
         # Find lanes by Sliding Window
         left_fit, right_fit, leftx, lefty, rightx, righty = findLanesSlidingWindow(warped_image)
