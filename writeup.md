@@ -98,10 +98,13 @@ I verified that my perspective transform was working as expected by drawing the 
 In the warped ("top-view") image, the Histogram and sliding window is carried to identify the lane-line pixel and whereafter `cv2.polyfit()` is used to find a second order polynomial to fit lane like this:
 
 ![alt text][image6]
+
 This is carried out by the function `findLanesSlidingWindow()` in p4.py
 
 When the lane fit is already available, say from previous frame, we go about doing a masking with some margin in order to avoid compute intensive sliding window approach, whose result can be visualized like shown:
+
 ![alt text][image7]
+
 This is carried out by the function `findLanesFromLaneFit()` in p4.py
 
 ####5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
