@@ -26,6 +26,9 @@ The goals / steps of this project are the following:
 [image7]: ./output_images/MaskingApproach.png "Masking"
 [image8]: ./output_images/LanesFound.png "LanesFound"
 [video1]: ./project_video.mp4 "Video"
+[image9]: ./output_images/Gray_Channel.png "Gray"
+[image10]: ./output_images/H_Channel.png "Hue"
+[image11]: ./output_images/R_Channel.png "Red"
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
 ###Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
@@ -125,5 +128,52 @@ Here's a [link to my video result](./project_video_output.mp4)
 
 ####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.
+
+Basic building blocks of the pipeline are:
+* Distortion Correction
+* Finding the thresholded binary image
+* Perspective transform
+* Lane detection and tracking
+* Lane curvature and Vehicle offset calculation 
+* Super imposition of the lane onto Undistorted image frame
+
+##### Distortion Correction
+Once the Camera calibration is done successfully, which gives Camera Matrix and Distortion Parameters, Distortion correction is straight forward step. Also this step is invariant to the different scenario videos as the camera instrinsic do not change.
+
+##### Finding the thresolded binary image.
+This is one of the challenging step, as we cannot find line pixels very predictively from one single source or channel. Hence we consider many color channels in different domains and gradient based methods. Even here the issue is the threshold values which might work for a scene might not work for different scene given the differences coming from illumination, shadows, road texture. Also it is being explored if histogram equalization helps in those scenarios of extreme contrast. 
+
+![alt text][image9]
+![alt text][image10]
+![alt text][image11]
+
+##### Perspective transform
+Here what is learned that the perspective transform arrived and which successfully for one video sequence does not old true for the more challenging video sequence becuase of the orientation of the vehicle with respective to road. Hence even the Perspective transform matrices have to be calculated newly for new video and also would be good to do it online/adaptively as the scene changes. Another irony is if we want to larger distance from the vehicle covered which is good for more accurate road
+curvature calculation, then we might suffer on the accurate lane detection part.
+
+
+##### Lane detection and tracking
+Here the fact that the lanes does not change direction so drastically in subsequent frames is exploited where a history lanes detected in previous 10 frames is cache which gives guidance as an approximate lane fit where the lanes are searched for given a margin of +/-100 pixels. In case of failure to find lanes which would be shown as drastic diff in road curvature, the fall back  but a slightly compute intensive method of SlidingWindow is pursued.
+
+##### Lane curvature and Vehicle offset calculation 
+If the lanes detected are right, this is a straight forward step. Here the hyperparameters used are.
+```
+    # Define conversions in x and y from pixels space to meters
+    ym_per_pix = 30/720 # meters per pixel in y dimension
+    xm_per_pix = 3.7/700 # meters per pixel in x dimension
+```
+
+##### Super imposition of the lane onto Undistorted image frame
+Given the line fit of left and right lanes, the area is filled with a color and dewarped on to the undistorted image domain where it is additively added to shown transparency effect.
+
+
+
+#### Future work
+To make the steps of  
+* Finding the thresolded binary image.
+* Perspective transform
+more robust to make it work with the harder challenge and more real world scenarios.
+
+
 

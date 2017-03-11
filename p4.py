@@ -116,8 +116,9 @@ def get_thresholded_image(img):
     gray_bin = color_thresh(gray, thresh=(200, 255))
     s_bin = color_thresh(s, thresh=(150, 255))
     r_bin = color_thresh(r, thresh=(200, 255))
+    h_bin = color_thresh(h, thresh=(15, 35))
     com_color_threshold_bin_image = np.zeros_like(abs_bin_threshold_image).astype(np.uint8)
-    com_color_threshold_bin_image[(gray_bin == 1) | (s_bin == 1) | (r_bin == 1) ] = 1
+    com_color_threshold_bin_image[(gray_bin == 1) | (s_bin == 1) | (r_bin == 1) | (r_bin == 1) ] = 1
     com_color_threshold_bin_image[(com_grad_threshold_bin_image==1)] = 1
 
     return com_color_threshold_bin_image
